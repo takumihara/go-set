@@ -71,63 +71,32 @@ func TestAddInt(t *testing.T) {
 		"initialization and one element": {
 			args:  []int{1},
 			start: Set[int]{},
-			want: Set[int]{
-				m: map[int]struct{}{
-					1: {},
-				},
-			},
+			want:  Of(1),
 		},
 		"initialization and several elements": {
 			args:  []int{1, 2, 3},
 			start: Set[int]{},
-			want: Set[int]{
-				m: map[int]struct{}{
-					1: {},
-					2: {},
-					3: {},
-				},
-			},
+			want:  Of(1, 2, 3),
 		},
 		"initialization and empty": {
 			args:  []int{},
 			start: Set[int]{},
-			want: Set[int]{
-				m: map[int]struct{}{},
-			},
+			want:  Of[int](),
 		},
 		"no initialization and one element": {
 			args:  []int{1},
 			start: Of(-1, -2),
-			want: Set[int]{
-				m: map[int]struct{}{
-					-1: {},
-					-2: {},
-					1:  {},
-				},
-			},
+			want:  Of(-1, -2, 1),
 		},
 		"no initialization and several elements": {
 			args:  []int{1, 2, 3},
 			start: Of(-1, -2),
-			want: Set[int]{
-				m: map[int]struct{}{
-					-1: {},
-					-2: {},
-					1:  {},
-					2:  {},
-					3:  {},
-				},
-			},
+			want:  Of(-1, -2, 1, 2, 3),
 		},
 		"no initialization and empty": {
 			args:  []int{},
 			start: Of(-1, -2),
-			want: Set[int]{
-				m: map[int]struct{}{
-					-1: {},
-					-2: {},
-				},
-			},
+			want:  Of(-1, -2),
 		},
 	}
 
