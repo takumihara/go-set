@@ -29,6 +29,14 @@ func (s *Set[Elem]) Add(v ...Elem) {
 	}
 }
 
+// AddSet adds the elements of set s2 to s.
+func (s *Set[Elem]) AddSet(s2 Set[Elem]) {
+	s.initOnce.Do(s.init)
+	for k := range s2.m {
+		s.m[k] = struct{}{}
+	}
+}
+
 func (s *Set[Elem]) init() {
 	s.m = map[Elem]struct{}{}
 }
