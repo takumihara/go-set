@@ -23,7 +23,14 @@ func TestOfInt(t *testing.T) {
 		args []int
 		want Set[int]
 	}{
-		"one element": {[]int{1}, Set[int]{m: map[int]struct{}{1: {}}}},
+		"one element": {
+			args: []int{1},
+			want: Set[int]{
+				m: map[int]struct{}{
+					1: {},
+				},
+			},
+		},
 		"several elements": {
 			args: []int{1, 2, 3},
 			want: Set[int]{
@@ -32,6 +39,12 @@ func TestOfInt(t *testing.T) {
 					2: {},
 					3: {},
 				},
+			},
+		},
+		"empty": {
+			args: []int{},
+			want: Set[int]{
+				m: map[int]struct{}{},
 			},
 		},
 	}
