@@ -37,6 +37,15 @@ func (s *Set[Elem]) AddSet(s2 Set[Elem]) {
 	}
 }
 
+// Remove removes elements from a set.
+// Elements that are not present are ignored.
+func (s *Set[Elem]) Remove(v ...Elem) {
+	// TODO: is initialization needed?
+	for _, v := range v {
+		delete(s.m, v)
+	}
+}
+
 func (s *Set[Elem]) init() {
 	s.m = map[Elem]struct{}{}
 }
