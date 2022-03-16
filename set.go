@@ -46,6 +46,14 @@ func (s *Set[Elem]) Remove(v ...Elem) {
 	}
 }
 
+// RemoveSet removes the elements of set s2 from s.
+// Elements present in s2 but not s are ignored.
+func (s *Set[Elem]) RemoveSet(s2 Set[Elem]) {
+	for k := range s2.m {
+		delete(s.m, k)
+	}
+}
+
 func (s *Set[Elem]) init() {
 	s.m = map[Elem]struct{}{}
 }
