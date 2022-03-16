@@ -59,3 +59,85 @@ func TestOfInt(t *testing.T) {
 		})
 	}
 }
+
+func TestAddInt(t *testing.T) {
+	t.Parallel()
+
+	tests := map[string]struct {
+		args  []int
+		start Set[int]
+		want  Set[int]
+	}{
+		"initialization and one element": {
+			args:  []int{1},
+			start: Set[int]{},
+			want: Set[int]{
+				m: map[int]struct{}{
+					1: {},
+				},
+			},
+		},
+		"initialization and several elements": {
+			args:  []int{1, 2, 3},
+			start: Set[int]{},
+			want: Set[int]{
+				m: map[int]struct{}{
+					1: {},
+					2: {},
+					3: {},
+				},
+			},
+		},
+		"initialization and empty": {
+			args:  []int{},
+			start: Set[int]{},
+			want: Set[int]{
+				m: map[int]struct{}{},
+			},
+		},
+		"no initialization and one element": {
+			args:  []int{1},
+			start: Of(-1, -2),
+			want: Set[int]{
+				m: map[int]struct{}{
+					-1: {},
+					-2: {},
+					1:  {},
+				},
+			},
+		},
+		"no initialization and several elements": {
+			args:  []int{1, 2, 3},
+			start: Of(-1, -2),
+			want: Set[int]{
+				m: map[int]struct{}{
+					-1: {},
+					-2: {},
+					1:  {},
+					2:  {},
+					3:  {},
+				},
+			},
+		},
+		"no initialization and empty": {
+			args:  []int{},
+			start: Of(-1, -2),
+			want: Set[int]{
+				m: map[int]struct{}{
+					-1: {},
+					-2: {},
+				},
+			},
+		},
+	}
+
+	for name, tt := range tests {
+		tt := tt
+		t.Run(name, func(t *testing.T) {
+			tt.start.Add(tt.args...)
+			if !sameSet(tt.start, tt.want) {
+				t.Fatalf("got %v, want %v", tt.start, tt.want)
+			}
+		})
+	}
+}
