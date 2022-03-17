@@ -506,3 +506,40 @@ func TestRetain(t *testing.T) {
 	}
 }
 
+
+func TestLen(t *testing.T) {
+	t.Parallel()
+
+	tests := map[string]struct {
+		start Set[int]
+		want  int
+	}{
+		"initialization and false": {
+			start: Set[int]{},
+			want: 0,
+		},
+		"no initialization and empty": {
+			start: Of[int](),
+			want: 0,
+		},
+		"no initialization and one element": {
+			start: Of(1),
+			want: 1,
+		},
+		"no initialization and several elements": {
+			start: Of(1, 2, 3),
+			want: 3,
+		},
+	}
+
+	for name, tt := range tests {
+		tt := tt
+		t.Run(name, func(t *testing.T) {
+			got := tt.start.Len()
+			if got != tt.want {
+				t.Fatalf("got %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+

@@ -104,6 +104,11 @@ func (s *Set[Elem]) Retain(keep func(Elem) bool) {
 	}
 }
 
+// Len returns the number of elements in s.
+func (s *Set[Elem]) Len() int {
+	return len(s.m)
+}
+
 func (s *Set[Elem]) init() {
 	s.m = map[Elem]struct{}{}
 }
