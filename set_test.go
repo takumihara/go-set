@@ -2,9 +2,11 @@ package set
 
 import (
 	"testing"
+
+	"golang.org/x/exp/slices"
 )
 
-func sameSet[T comparable](s1 Set[T], s2 Set[T]) bool {
+func equalSet[T comparable](s1 Set[T], s2 Set[T]) bool {
 	if len(s1.m) != len(s2.m) {
 		return false
 	}
@@ -53,7 +55,7 @@ func TestOfInt(t *testing.T) {
 		tt := tt
 		t.Run(name, func(t *testing.T) {
 			got := Of(tt.args...)
-			if !sameSet(got, tt.want) {
+			if !equalSet(got, tt.want) {
 				t.Fatalf("got %v, want %v", got, tt.want)
 			}
 		})
@@ -104,7 +106,7 @@ func TestAddInt(t *testing.T) {
 		tt := tt
 		t.Run(name, func(t *testing.T) {
 			tt.start.Add(tt.args...)
-			if !sameSet(tt.start, tt.want) {
+			if !equalSet(tt.start, tt.want) {
 				t.Fatalf("got %v, want %v", tt.start, tt.want)
 			}
 		})
@@ -155,7 +157,7 @@ func TestAddSet(t *testing.T) {
 		tt := tt
 		t.Run(name, func(t *testing.T) {
 			tt.start.AddSet(tt.args)
-			if !sameSet(tt.start, tt.want) {
+			if !equalSet(tt.start, tt.want) {
 				t.Fatalf("got %v, want %v", tt.start, tt.want)
 			}
 		})
@@ -206,7 +208,7 @@ func TestRemove(t *testing.T) {
 		tt := tt
 		t.Run(name, func(t *testing.T) {
 			tt.start.Remove(tt.args...)
-			if !sameSet(tt.start, tt.want) {
+			if !equalSet(tt.start, tt.want) {
 				t.Fatalf("got %v, want %v", tt.start, tt.want)
 			}
 		})
@@ -257,7 +259,7 @@ func TestRemoveSet(t *testing.T) {
 		tt := tt
 		t.Run(name, func(t *testing.T) {
 			tt.start.RemoveSet(tt.args)
-			if !sameSet(tt.start, tt.want) {
+			if !equalSet(tt.start, tt.want) {
 				t.Fatalf("got %v, want %v", tt.start, tt.want)
 			}
 		})
@@ -371,6 +373,42 @@ func TestContainsAll(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			got := tt.start.ContainsAll(tt.args)
 			if tt.want != got {
+				t.Fatalf("got %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestToSlice(t *testing.T) {
+	t.Parallel()
+
+	tests := map[string]struct {
+		start Set[int]
+		want  []int
+	}{
+		"initialization and false": {
+			start: Set[int]{},
+			want:  []int{},
+		},
+		"no initialization and empty": {
+			start: Of[int](),
+			want:  []int{},
+		},
+		"no initialization and one element": {
+			start: Of(1),
+			want:  []int{1},
+		},
+		"no initialization and several elements": {
+			start: Of(1, 2, 3),
+			want:  []int{1, 2, 3},
+		},
+	}
+
+	for name, tt := range tests {
+		tt := tt
+		t.Run(name, func(t *testing.T) {
+			got := tt.start.ToSlice()
+			if !slices.Equal(got, tt.want) {
 				t.Fatalf("got %v, want %v", got, tt.want)
 			}
 		})

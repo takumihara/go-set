@@ -80,6 +80,16 @@ func (s *Set[Elem]) ContainsAll(s2 Set[Elem]) bool {
 	return true
 }
 
+// ToSlice returns the elements in the set s as a slice.
+// The values will be in an indeterminate order.
+func (s *Set[Elem]) ToSlice() []Elem {
+	var rs []Elem
+	for k := range s.m {
+		rs = append(rs, k)
+	}
+	return rs
+}
+
 func (s *Set[Elem]) init() {
 	s.m = map[Elem]struct{}{}
 }
