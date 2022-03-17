@@ -7,18 +7,6 @@ import (
 	"golang.org/x/exp/slices"
 )
 
-func equalSet[T comparable](s1 Set[T], s2 Set[T]) bool {
-	if len(s1.m) != len(s2.m) {
-		return false
-	}
-	for k := range s1.m {
-		if _, ok := s2.m[k]; !ok {
-			return false
-		}
-	}
-	return true
-}
-
 func TestOfInt(t *testing.T) {
 	t.Parallel()
 
@@ -56,7 +44,7 @@ func TestOfInt(t *testing.T) {
 		tt := tt
 		t.Run(name, func(t *testing.T) {
 			got := Of(tt.args...)
-			if !equalSet(got, tt.want) {
+			if !tt.want.Equal(got) {
 				t.Fatalf("got %v, want %v", got, tt.want)
 			}
 		})
@@ -139,7 +127,7 @@ func TestAddInt(t *testing.T) {
 		tt := tt
 		t.Run(name, func(t *testing.T) {
 			tt.start.Add(tt.args...)
-			if !equalSet(tt.start, tt.want) {
+			if !tt.want.Equal(tt.start) {
 				t.Fatalf("got %v, want %v", tt.start, tt.want)
 			}
 		})
@@ -190,7 +178,7 @@ func TestAddSet(t *testing.T) {
 		tt := tt
 		t.Run(name, func(t *testing.T) {
 			tt.start.AddSet(tt.args)
-			if !equalSet(tt.start, tt.want) {
+			if !tt.want.Equal(tt.start) {
 				t.Fatalf("got %v, want %v", tt.start, tt.want)
 			}
 		})
@@ -241,7 +229,7 @@ func TestRemove(t *testing.T) {
 		tt := tt
 		t.Run(name, func(t *testing.T) {
 			tt.start.Remove(tt.args...)
-			if !equalSet(tt.start, tt.want) {
+			if !tt.want.Equal(tt.start) {
 				t.Fatalf("got %v, want %v", tt.start, tt.want)
 			}
 		})
@@ -292,7 +280,7 @@ func TestRemoveSet(t *testing.T) {
 		tt := tt
 		t.Run(name, func(t *testing.T) {
 			tt.start.RemoveSet(tt.args)
-			if !equalSet(tt.start, tt.want) {
+			if !tt.want.Equal(tt.start) {
 				t.Fatalf("got %v, want %v", tt.start, tt.want)
 			}
 		})
@@ -450,6 +438,52 @@ func TestToSlice(t *testing.T) {
 	}
 }
 
+func TestEqual(t *testing.T) {
+	t.Parallel()
+
+	tests := map[string]struct {
+		args  Set[int]
+		start Set[int]
+		want  bool
+	}{
+		"initialization and false": {
+			args:  Of(1, 2),
+			start: Set[int]{},
+			want:  false,
+		},
+		"initialization and true": {
+			args:  Set[int]{},
+			start: Set[int]{},
+			want:  true,
+		},
+		"no initialization and true": {
+			args:  Of(1, 2),
+			start: Of(1, 2),
+			want:  true,
+		},
+		"no initialization and false1": {
+			args:  Of(2, 3, 4),
+			start: Of(2, 3, 4, 5),
+			want:  false,
+		},
+		"no initialization and false2": {
+			args:  Of(2, 3, 4),
+			start: Of(2, 3),
+			want:  false,
+		},
+	}
+
+	for name, tt := range tests {
+		tt := tt
+		t.Run(name, func(t *testing.T) {
+			got := tt.start.Equal(tt.args)
+			if tt.want != got {
+				t.Fatalf("got %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
 func TestClear(t *testing.T) {
 	t.Parallel()
 
@@ -479,7 +513,7 @@ func TestClear(t *testing.T) {
 		tt := tt
 		t.Run(name, func(t *testing.T) {
 			tt.start.Clear()
-			if !equalSet(tt.start, tt.want) {
+			if !tt.want.Equal(tt.start) {
 				t.Fatalf("got %v, want %v", tt.start, tt.want)
 			}
 		})
@@ -515,7 +549,7 @@ func TestClone(t *testing.T) {
 		tt := tt
 		t.Run(name, func(t *testing.T) {
 			got := tt.start.Clone()
-			if !equalSet(tt.want, got) {
+			if !tt.want.Equal(got) {
 				t.Fatalf("got %v, want %v", got, tt.want)
 			}
 		})
@@ -569,7 +603,7 @@ func TestRetain(t *testing.T) {
 		tt := tt
 		t.Run(name, func(t *testing.T) {
 			tt.start.Retain(tt.arg)
-			if !equalSet(tt.start, tt.want) {
+			if !tt.want.Equal(tt.start) {
 				t.Fatalf("got %v, want %v", tt.start, tt.want)
 			}
 		})
@@ -777,8 +811,7 @@ func TestUnion(t *testing.T) {
 		tt := tt
 		t.Run(name, func(t *testing.T) {
 			got := Union(tt.arg1, tt.arg2)
-			// if !tt.want.Equal(got) {
-			if !equalSet(tt.want, got) {
+			if !tt.want.Equal(got) {
 				t.Fatalf("got %v, want %v", got, tt.want)
 			}
 		})

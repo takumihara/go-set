@@ -98,6 +98,19 @@ func (s *Set[Elem]) ToSlice() []Elem {
 	return r
 }
 
+// Equal reports whether s and s2 contain the same elements.
+func (s *Set[Elem]) Equal(s2 Set[Elem]) bool {
+	if s.Len() != s2.Len() {
+		return false
+	}
+	for k := range s.m {
+		if _, ok := s2.m[k]; !ok {
+			return false
+		}
+	}
+	return true
+}
+
 // Clear removes all elements from s, leaving it empty.
 func (s *Set[Elem]) Clear() {
 	s.m = map[Elem]struct{}{}
