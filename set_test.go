@@ -63,6 +63,7 @@ func TestOfInt(t *testing.T) {
 	}
 }
 
+// TOOD: find out how to get the capacity of a map
 // func TestWithCap(t *testing.T) {
 // 	t.Parallel()
 
@@ -485,6 +486,41 @@ func TestClear(t *testing.T) {
 	}
 }
 
+func TestClone(t *testing.T) {
+	t.Parallel()
+
+	tests := map[string]struct {
+		start Set[int]
+		want  Set[int]
+	}{
+		"initialization and false": {
+			start: Set[int]{},
+			want:  Of[int](),
+		},
+		"no initialization and empty": {
+			start: Of[int](),
+			want:  Of[int](),
+		},
+		"no initialization and one element": {
+			start: Of(1),
+			want:  Of(1),
+		},
+		"no initialization and several elements": {
+			start: Of(1, 2, 3),
+			want:  Of(1, 2, 3),
+		},
+	}
+
+	for name, tt := range tests {
+		tt := tt
+		t.Run(name, func(t *testing.T) {
+			got := tt.start.Clone()
+			if !equalSet(tt.want, got) {
+				t.Fatalf("got %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
 func TestRetain(t *testing.T) {
 	t.Parallel()
 

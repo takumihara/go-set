@@ -20,6 +20,7 @@ func Of[Elem comparable](v ...Elem) Set[Elem] {
 	return s
 }
 
+// WithCap returns a new set with the given capacity.
 func WithCap[Elem comparable](cap int) Set[Elem] {
 	s := Set[Elem]{
 		m: make(map[Elem]struct{}, cap),
@@ -100,6 +101,17 @@ func (s *Set[Elem]) ToSlice() []Elem {
 // Clear removes all elements from s, leaving it empty.
 func (s *Set[Elem]) Clear() {
 	s.m = map[Elem]struct{}{}
+}
+
+// Clone returns a copy of s.
+// The elements are copied using assignment,
+// so this is a shallow clone.
+func (s *Set[Elem]) Clone() Set[Elem] {
+	r := WithCap[Elem](len(s.m))
+	for k := range s.m {
+		r.m[k] = struct{}{}
+	}
+	return r
 }
 
 // Retain deletes any elements from s for which keep returns false.
