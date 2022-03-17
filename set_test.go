@@ -698,3 +698,47 @@ func TestDoStoppedInTheMiddle(t *testing.T) {
 		})
 	}
 }
+
+func TessPop(t *testing.T) {
+	t.Parallel()
+
+	tests := map[string]struct {
+		start      Set[int]
+		want       []int
+		want_error bool
+	}{
+		"initialization and false": {
+			start:      Set[int]{},
+			want:       []int{},
+			want_error: false,
+		},
+		"no initialization and empty": {
+			start:      Of[int](),
+			want:       []int{},
+			want_error: false,
+		},
+		"no initialization and one element": {
+			start:      Of(1),
+			want:       []int{1},
+			want_error: true,
+		},
+		"no initialization and several elements": {
+			start:      Of(1, 2, 3),
+			want:       []int{1, 2, 3},
+			want_error: true,
+		},
+	}
+
+	for name, tt := range tests {
+		tt := tt
+		t.Run(name, func(t *testing.T) {
+			got, ok := tt.start.Pop()
+			if ok != tt.want_error {
+				t.Fatalf("got %v, want %v", ok, tt.want_error)
+			}
+			if ok && !slices.Contains(tt.want, got) {
+				t.Fatalf("got %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

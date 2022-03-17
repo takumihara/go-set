@@ -140,6 +140,15 @@ func (s *Set[Elem]) Do(f func(Elem) bool) {
 	}
 }
 
+func (s *Set[Elem]) Pop() (Elem, bool) {
+	for k := range s.m {
+		delete(s.m, k)
+		return k, true
+	}
+	var r Elem
+	return r, false
+}
+
 func (s *Set[Elem]) init() {
 	s.m = map[Elem]struct{}{}
 }
