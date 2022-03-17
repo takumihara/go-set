@@ -450,3 +450,59 @@ func TestClear(t *testing.T) {
 		})
 	}
 }
+
+func TestRetain(t *testing.T) {
+	t.Parallel()
+
+	tests := map[string]struct {
+		start Set[int]
+		arg   func(int) bool
+		want  Set[int]
+	}{
+		"initialization and false": {
+			start: Set[int]{},
+			arg: func(int) bool {
+				return true
+			},
+			want: Of[int](),
+		},
+		"no initialization and empty": {
+			start: Of[int](),
+			arg: func(int) bool {
+				return true
+			},
+			want: Of[int](),
+		},
+		"no initialization and one element": {
+			start: Of(1),
+			arg: func(elem int) bool {
+				if elem%2 == 0 {
+					return true
+				}
+				return false
+			},
+			want: Of[int](),
+		},
+		"no initialization and several elements": {
+			start: Of(1, 2, 3),
+			arg: func(elem int) bool {
+				if elem%2 == 0 {
+					return true
+				}
+				return false
+			},
+			want: Of(2),
+		},
+	}
+
+	for name, tt := range tests {
+		tt := tt
+		t.Run(name, func(t *testing.T) {
+			tt.start.Retain(tt.arg)
+			if !equalSet(tt.start, tt.want) {
+				t.Fatalf("got %v, want %v", tt.start, tt.want)
+			}
+		})
+	}
+}
+

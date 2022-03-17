@@ -95,6 +95,15 @@ func (s *Set[Elem]) Clear() {
 	s.m = map[Elem]struct{}{}
 }
 
+// Retain deletes any elements from s for which keep returns false.
+func (s *Set[Elem]) Retain(keep func(Elem) bool) {
+	for k := range s.m {
+		if !keep(k) {
+			delete(s.m, k)
+		}
+	}
+}
+
 func (s *Set[Elem]) init() {
 	s.m = map[Elem]struct{}{}
 }
