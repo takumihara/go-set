@@ -178,3 +178,17 @@ func Union[Elem comparable](s1, s2 Set[Elem]) Set[Elem] {
 	}
 	return r
 }
+
+// Intersect constructs a new set containing the intersection of s1 and s2.
+func Intersect[Elem comparable](s1, s2 Set[Elem]) Set[Elem] {
+	if len(s1.m) > len(s2.m) {
+		s1, s2 = s2, s1
+	}
+	r := WithCap[Elem](len(s1.m))
+	for k := range s1.m {
+		if s2.Contains(k) {
+			r.m[k] = struct{}{}
+		}
+	}
+	return r
+}
