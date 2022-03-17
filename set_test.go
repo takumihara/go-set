@@ -858,3 +858,44 @@ func TestIntersect(t *testing.T) {
 		})
 	}
 }
+
+func TestDifference(t *testing.T) {
+	t.Parallel()
+
+	tests := map[string]struct {
+		arg1 Set[int]
+		arg2 Set[int]
+		want Set[int]
+	}{
+		"initialization and empty": {
+			arg1: Set[int]{},
+			arg2: Set[int]{},
+			want: Of[int](),
+		},
+		"no initialization and empty": {
+			arg1: Of[int](),
+			arg2: Of[int](),
+			want: Of[int](),
+		},
+		"no initialization and same elements": {
+			arg1: Of(1, 2, 3),
+			arg2: Of(1, 2, 3),
+			want: Of[int](),
+		},
+		"no initialization and different elements": {
+			arg1: Of(1, 2, 3),
+			arg2: Of(4, 5, 6),
+			want: Of(1, 2, 3),
+		},
+	}
+
+	for name, tt := range tests {
+		tt := tt
+		t.Run(name, func(t *testing.T) {
+			got := Difference(tt.arg1, tt.arg2)
+			if !tt.want.Equal(got) {
+				t.Fatalf("got %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

@@ -192,3 +192,14 @@ func Intersect[Elem comparable](s1, s2 Set[Elem]) Set[Elem] {
 	}
 	return r
 }
+
+// Difference constructs a new set containing the elements of s1 that are not in s2.
+func Difference[Elem comparable](s1, s2 Set[Elem]) Set[Elem] {
+	r := WithCap[Elem](len(s1.m))
+	for k := range s1.m {
+		if _, ok := s2.m[k]; !ok {
+			r.m[k] = struct{}{}
+		}
+	}
+	return r
+}
