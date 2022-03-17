@@ -60,7 +60,15 @@ func (s *Set[Elem]) Contains(v Elem) bool {
 	return ok
 }
 
-
+// ContainsAny reports whether any of the elements in s2 are in s.
+func (s *Set[Elem]) ContainsAny(s2 Set[Elem]) bool {
+	for k := range s2.m {
+		if s.Contains(k) {
+			return true
+		}
+	}
+	return false
+}
 
 func (s *Set[Elem]) init() {
 	s.m = map[Elem]struct{}{}

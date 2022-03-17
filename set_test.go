@@ -299,3 +299,39 @@ func TestContains(t *testing.T) {
 		})
 	}
 }
+
+func TestContainsAny(t *testing.T) {
+	t.Parallel()
+
+	tests := map[string]struct {
+		args  Set[int]
+		start Set[int]
+		want  bool
+	}{
+		"initialization and false": {
+			args:  Of(1, 2),
+			start: Set[int]{},
+			want:  false,
+		},
+		"no initialization and true": {
+			args:  Of(-1, 0, 1),
+			start: Of(1, 2),
+			want:  true,
+		},
+		"no initialization and false": {
+			args:  Of(-1, 0, 1),
+			start: Of(2, 3),
+			want:  false,
+		},
+	}
+
+	for name, tt := range tests {
+		tt := tt
+		t.Run(name, func(t *testing.T) {
+			got := tt.start.ContainsAny(tt.args)
+			if tt.want != got {
+				t.Fatalf("got %v, want %v", tt.start, tt.want)
+			}
+		})
+	}
+}
