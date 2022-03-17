@@ -294,7 +294,7 @@ func TestContains(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			got := tt.start.Contains(tt.args)
 			if tt.want != got {
-				t.Fatalf("got %v, want %v", tt.start, tt.want)
+				t.Fatalf("got %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -330,7 +330,48 @@ func TestContainsAny(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			got := tt.start.ContainsAny(tt.args)
 			if tt.want != got {
-				t.Fatalf("got %v, want %v", tt.start, tt.want)
+				t.Fatalf("got %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestContainsAll(t *testing.T) {
+	t.Parallel()
+
+	tests := map[string]struct {
+		args  Set[int]
+		start Set[int]
+		want  bool
+	}{
+		"initialization and false": {
+			args:  Of(1, 2),
+			start: Set[int]{},
+			want:  false,
+		},
+		"initialization and true": {
+			args:  Set[int]{},
+			start: Set[int]{},
+			want:  true,
+		},
+		"no initialization and true": {
+			args:  Of(1, 2),
+			start: Of(1, 2),
+			want:  true,
+		},
+		"no initialization and false": {
+			args:  Of(2, 3, 4),
+			start: Of(2, 3),
+			want:  false,
+		},
+	}
+
+	for name, tt := range tests {
+		tt := tt
+		t.Run(name, func(t *testing.T) {
+			got := tt.start.ContainsAll(tt.args)
+			if tt.want != got {
+				t.Fatalf("got %v, want %v", got, tt.want)
 			}
 		})
 	}
