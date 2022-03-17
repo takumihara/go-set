@@ -263,3 +263,39 @@ func TestRemoveSet(t *testing.T) {
 		})
 	}
 }
+
+func TestContains(t *testing.T) {
+	t.Parallel()
+
+	tests := map[string]struct {
+		args  int
+		start Set[int]
+		want  bool
+	}{
+		"initialization and false": {
+			args:  1,
+			start: Set[int]{},
+			want:  false,
+		},
+		"no initialization and true": {
+			args:  1,
+			start: Of(1, 2),
+			want:  true,
+		},
+		"no initialization and false": {
+			args:  1,
+			start: Of(2, 3),
+			want:  false,
+		},
+	}
+
+	for name, tt := range tests {
+		tt := tt
+		t.Run(name, func(t *testing.T) {
+			got := tt.start.Contains(tt.args)
+			if tt.want != got {
+				t.Fatalf("got %v, want %v", tt.start, tt.want)
+			}
+		})
+	}
+}

@@ -54,6 +54,14 @@ func (s *Set[Elem]) RemoveSet(s2 Set[Elem]) {
 	}
 }
 
+// Contains reports whether v is in the set.
+func (s *Set[Elem]) Contains(v Elem) bool {
+	_, ok := s.m[v]
+	return ok
+}
+
+
+
 func (s *Set[Elem]) init() {
 	s.m = map[Elem]struct{}{}
 }
