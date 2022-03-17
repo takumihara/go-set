@@ -90,6 +90,11 @@ func (s *Set[Elem]) ToSlice() []Elem {
 	return rs
 }
 
+// Clear removes all elements from s, leaving it empty.
+func (s *Set[Elem]) Clear() {
+	s.m = map[Elem]struct{}{}
+}
+
 func (s *Set[Elem]) init() {
 	s.m = map[Elem]struct{}{}
 }

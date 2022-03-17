@@ -414,3 +414,39 @@ func TestToSlice(t *testing.T) {
 		})
 	}
 }
+
+func TestClear(t *testing.T) {
+	t.Parallel()
+
+	tests := map[string]struct {
+		start Set[int]
+		want  Set[int]
+	}{
+		"initialization and false": {
+			start: Set[int]{},
+			want:  Of[int](),
+		},
+		"no initialization and empty": {
+			start: Of[int](),
+			want:  Of[int](),
+		},
+		"no initialization and one element": {
+			start: Of(1),
+			want:  Of[int](),
+		},
+		"no initialization and several elements": {
+			start: Of(1, 2, 3),
+			want:  Of[int](),
+		},
+	}
+
+	for name, tt := range tests {
+		tt := tt
+		t.Run(name, func(t *testing.T) {
+			tt.start.Clear()
+			if !equalSet(tt.start, tt.want) {
+				t.Fatalf("got %v, want %v", tt.start, tt.want)
+			}
+		})
+	}
+}
