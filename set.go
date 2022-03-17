@@ -140,6 +140,7 @@ func (s *Set[Elem]) Do(f func(Elem) bool) {
 	}
 }
 
+// Pop removes and returns an arbitrary element from s.
 func (s *Set[Elem]) Pop() (Elem, bool) {
 	for k := range s.m {
 		delete(s.m, k)
@@ -151,4 +152,16 @@ func (s *Set[Elem]) Pop() (Elem, bool) {
 
 func (s *Set[Elem]) init() {
 	s.m = map[Elem]struct{}{}
+}
+
+// Union constructs a new set containing the union of s1 and s2.
+func Union[Elem comparable](s1, s2 Set[Elem]) Set[Elem] {
+	r := WithCap[Elem](len(s1.m) + len(s2.m))
+	for k := range s1.m {
+		r.m[k] = struct{}{}
+	}
+	for k := range s2.m {
+		r.m[k] = struct{}{}
+	}
+	return r
 }
