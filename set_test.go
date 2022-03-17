@@ -3,6 +3,7 @@ package set
 import (
 	"testing"
 
+	"golang.org/x/exp/maps"
 	"golang.org/x/exp/slices"
 )
 
@@ -408,6 +409,8 @@ func TestToSlice(t *testing.T) {
 		tt := tt
 		t.Run(name, func(t *testing.T) {
 			got := tt.start.ToSlice()
+			slices.Sort(got)
+			slices.Sort(tt.want)
 			if !slices.Equal(got, tt.want) {
 				t.Fatalf("got %v, want %v", got, tt.want)
 			}
@@ -506,7 +509,6 @@ func TestRetain(t *testing.T) {
 	}
 }
 
-
 func TestLen(t *testing.T) {
 	t.Parallel()
 
@@ -516,19 +518,19 @@ func TestLen(t *testing.T) {
 	}{
 		"initialization and false": {
 			start: Set[int]{},
-			want: 0,
+			want:  0,
 		},
 		"no initialization and empty": {
 			start: Of[int](),
-			want: 0,
+			want:  0,
 		},
 		"no initialization and one element": {
 			start: Of(1),
-			want: 1,
+			want:  1,
 		},
 		"no initialization and several elements": {
 			start: Of(1, 2, 3),
-			want: 3,
+			want:  3,
 		},
 	}
 
@@ -543,3 +545,89 @@ func TestLen(t *testing.T) {
 	}
 }
 
+func TestDo(t *testing.T) {
+	t.Parallel()
+
+	tests := map[string]struct {
+		start Set[int]
+	}{
+		"initialization and false": {
+			start: Set[int]{},
+		},
+		"no initialization and empty": {
+			start: Of[int](),
+		},
+		"no initialization and one element": {
+			start: Of(1),
+		},
+		"no initialization and several elements": {
+			start: Of(1, 2, 3),
+		},
+	}
+
+	for name, tt := range tests {
+		tt := tt
+		t.Run(name, func(t *testing.T) {
+			var calledTimes int
+			mp := map[int]struct{}{}
+			tt.start.Do(func(i int) bool {
+				mp[i] = struct{}{}
+				calledTimes += 1
+				return true
+			})
+			if !maps.Equal(tt.start.m, mp) {
+				t.Fatalf("got %v, want %v", mp, tt.start.m)
+			}
+			if calledTimes != len(tt.start.m) {
+				t.Fatalf("calledTimes: got %v, want %v", calledTimes, len(tt.start.m))
+			}
+		})
+	}
+}
+
+func TestDoStoppedInTheMiddle(t *testing.T) {
+	t.Parallel()
+
+	tests := map[string]struct {
+		start Set[int]
+	}{
+		"initialization and false": {
+			start: Set[int]{},
+		},
+		"no initialization and empty": {
+			start: Of[int](),
+		},
+		"no initialization and one element": {
+			start: Of(1),
+		},
+		"no initialization and several elements": {
+			start: Of(1, 2, 3, 4, 5),
+		},
+	}
+
+	for name, tt := range tests {
+		tt := tt
+		t.Run(name, func(t *testing.T) {
+			added := map[int]struct{}{}
+			left := maps.Clone(tt.start.m)
+			tt.start.Do(func(i int) bool {
+				added[i] = struct{}{}
+				delete(left, i)
+				if i%2 == 0 {
+					return true
+				} else {
+					return false
+				}
+			})
+			if len(tt.start.m) != len(added)+len(left) {
+				t.Fatalf("set len: got %v, want %v", len(tt.start.m), len(added)+len(left))
+			}
+			for k := range left {
+				added[k] = struct{}{}
+			}
+			if !maps.Equal(tt.start.m, added) {
+				t.Fatalf("set elem: got %v, want %v", added, tt.start.m)
+			}
+		})
+	}
+}

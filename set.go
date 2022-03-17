@@ -13,7 +13,6 @@ func Of[Elem comparable](v ...Elem) Set[Elem] {
 	s := Set[Elem]{
 		m: make(map[Elem]struct{}, len(v)),
 	}
-	// TOOD: what is the best way to use sync.Once
 	s.initOnce.Do(func() {})
 	for _, v := range v {
 		s.m[v] = struct{}{}
@@ -107,6 +106,18 @@ func (s *Set[Elem]) Retain(keep func(Elem) bool) {
 // Len returns the number of elements in s.
 func (s *Set[Elem]) Len() int {
 	return len(s.m)
+}
+
+// Do calls f on every element in the set s,
+// stopping if f returns false.
+// f should not change s.
+// f will be called on values in an indeterminate order.
+func (s *Set[Elem]) Do(f func(Elem) bool) {
+	for k := range s.m {
+		if !f(k) {
+			break
+		}
+	}
 }
 
 func (s *Set[Elem]) init() {
