@@ -20,6 +20,14 @@ func Of[Elem comparable](v ...Elem) Set[Elem] {
 	return s
 }
 
+func WithCap[Elem comparable](cap int) Set[Elem] {
+	s := Set[Elem]{
+		m: make(map[Elem]struct{}, cap),
+	}
+	s.initOnce.Do(func() {})
+	return s
+}
+
 // Add adds elements to a set.
 func (s *Set[Elem]) Add(v ...Elem) {
 	s.initOnce.Do(s.init)
@@ -82,11 +90,11 @@ func (s *Set[Elem]) ContainsAll(s2 Set[Elem]) bool {
 // ToSlice returns the elements in the set s as a slice.
 // The values will be in an indeterminate order.
 func (s *Set[Elem]) ToSlice() []Elem {
-	var rs []Elem
+	r := make([]Elem, 0, len(s.m))
 	for k := range s.m {
-		rs = append(rs, k)
+		r = append(r, k)
 	}
-	return rs
+	return r
 }
 
 // Clear removes all elements from s, leaving it empty.

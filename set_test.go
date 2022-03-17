@@ -63,6 +63,37 @@ func TestOfInt(t *testing.T) {
 	}
 }
 
+// func TestWithCap(t *testing.T) {
+// 	t.Parallel()
+
+// 	tests := map[string]struct {
+// 		arg int
+// 		want int
+// 	}{
+// 		"zero": {
+// 			arg: 0,
+// 			want: 0,
+// 		},
+// 		"one": {
+// 			arg: 1,
+// 			want: 1,
+// 		},
+// 		"hundred": {
+// 			arg: 100,
+// 			want: 100,
+// 		},
+// 	}
+
+// 	for name, tt := range tests {
+// 		tt := tt
+// 		t.Run(name, func(t *testing.T) {
+// 			got := WithCap[int](tt.arg)
+// 			if cap(got.m) != tt.want {
+// 				t.Fatalf("got %v, want %v", got.Len(), tt.want)
+// 			}
+// 		})
+// 	}
+// }
 func TestAddInt(t *testing.T) {
 	t.Parallel()
 
