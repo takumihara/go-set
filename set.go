@@ -15,6 +15,9 @@ func Of[Elem comparable](v ...Elem) Set[Elem] {
 	}
 	s.initOnce.Do(func() {})
 	for _, v := range v {
+		if v != v {
+			panic("element in set has to be equal to itself")
+		}
 		s.m[v] = struct{}{}
 	}
 	return s
@@ -33,6 +36,9 @@ func WithCap[Elem comparable](cap int) Set[Elem] {
 func (s *Set[Elem]) Add(v ...Elem) {
 	s.initOnce.Do(s.init)
 	for _, v := range v {
+		if v != v {
+			panic("element in set has to be equal to itself")
+		}
 		s.m[v] = struct{}{}
 	}
 }

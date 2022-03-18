@@ -1,13 +1,14 @@
 package set
 
 import (
+	"math"
 	"testing"
 
 	"golang.org/x/exp/maps"
 	"golang.org/x/exp/slices"
 )
 
-func TestOfInt(t *testing.T) {
+func TestOf(t *testing.T) {
 	t.Parallel()
 
 	tests := map[string]struct {
@@ -83,7 +84,7 @@ func TestOfInt(t *testing.T) {
 // 		})
 // 	}
 // }
-func TestAddInt(t *testing.T) {
+func TestAdd(t *testing.T) {
 	t.Parallel()
 
 	tests := map[string]struct {
@@ -896,6 +897,74 @@ func TestDifference(t *testing.T) {
 			if !tt.want.Equal(got) {
 				t.Fatalf("got %v, want %v", got, tt.want)
 			}
+		})
+	}
+}
+
+func TestOfWithNaN(t *testing.T) {
+	t.Parallel()
+
+	tests := map[string]struct {
+		arg  []float64
+		want Set[float64]
+	}{
+		"one element": {
+			arg: []float64{math.NaN()},
+		},
+		"with other elements": {
+			arg: []float64{1.0, 2.0, math.NaN()},
+		},
+	}
+
+	for name, tt := range tests {
+		tt := tt
+		t.Run(name, func(t *testing.T) {
+			defer func() {
+				if r := recover(); r != "element in set has to be equal to itself" {
+					t.Fatalf("got %v, want %v", r, "element in set has to be equal to itself")
+				}
+			}()
+			Of(tt.arg...)
+		})
+	}
+}
+
+func TestAddWithNaN(t *testing.T) {
+	t.Parallel()
+
+	tests := map[string]struct {
+		args  []float64
+		start Set[float64]
+		want  Set[float64]
+	}{
+		"initialization and one element": {
+			args:  []float64{math.NaN()},
+			start: Set[float64]{},
+		},
+		"initialization and several elements": {
+			args:  []float64{1, 2, math.NaN()},
+			start: Set[float64]{},
+		},
+		"no initialization and one element": {
+			args:  []float64{math.NaN()},
+			start: Of(-1.0, -2.0),
+		},
+		"no initialization and several elements": {
+			args:  []float64{1.0, 2.0, math.NaN()},
+			start: Of(-1.0, -2.0),
+		},
+	}
+
+	for name, tt := range tests {
+		tt := tt
+		t.Run(name, func(t *testing.T) {
+			defer func() {
+				if r := recover(); r != "element in set has to be equal to itself" {
+					t.Fatalf("got %v, want %v", r, "element in set has to be equal to itself")
+				}
+			}()
+
+			tt.start.Add(tt.args...)
 		})
 	}
 }
